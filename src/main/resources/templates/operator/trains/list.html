@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Status — Namma Metro Operator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <style>
+        body{background:#0F0F1A;font-family:'Inter',sans-serif;color:#E2E8F0;margin:0}
+        .op-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(26,26,46,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(245,158,11,.2)}
+        .op-bar a{color:#FBBF24;text-decoration:none;font-weight:600;font-size:.9rem}
+        .op-bar .title{font-size:1.1rem;font-weight:700;color:#F8FAFC}
+        .container{max-width:1100px;margin:0 auto;padding:2.5rem 2rem}
+        .top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+        .top-row h1{font-size:1.5rem;font-weight:700;color:#F8FAFC}
+        .alert{padding:.75rem 1rem;border-radius:10px;margin-bottom:1.25rem;font-size:.875rem;font-weight:500}
+        .alert-error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#FCA5A5}
+        .alert-success{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#6EE7B7}
+        table{width:100%;border-collapse:collapse;background:#1A1A2E;border-radius:12px;overflow:hidden}
+        thead{background:rgba(245,158,11,.08)}
+        th{padding:.85rem 1rem;text-align:left;font-size:.8rem;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.05em}
+        td{padding:.85rem 1rem;font-size:.9rem;border-top:1px solid rgba(245,158,11,.08)}
+        tr:hover td{background:rgba(245,158,11,.03)}
+        .badge-s{padding:.2rem .6rem;border-radius:6px;font-size:.75rem;font-weight:600}
+        .badge-scheduled{background:rgba(59,130,246,.15);color:#60A5FA}
+        .badge-running{background:rgba(16,185,129,.15);color:#6EE7B7}
+        .badge-delayed{background:rgba(245,158,11,.15);color:#FBBF24}
+        .badge-cancelled{background:rgba(239,68,68,.15);color:#FCA5A5}
+        .badge-completed{background:rgba(124,58,237,.15);color:#A78BFA}
+        .badge-maintenance{background:rgba(100,116,139,.2);color:#94A3B8}
+        .btn-status{padding:.35rem .9rem;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#FBBF24;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;transition:all .3s}
+        .btn-status:hover{background:rgba(245,158,11,.25);color:#FBBF24}
+        .empty{text-align:center;padding:3rem;color:#64748B}
+    </style>
+</head>
+<body>
+    <div class="op-bar">
+        <a th:href="@{/operator/dashboard}">← Dashboard</a>
+        <span class="title">Train Status Management</span>
+        <a th:href="@{/auth/logout}">Logout</a>
+    </div>
+    <div class="container">
+        <div class="top-row"><h1>🚆 Trains</h1></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <table th:if="${!trains.isEmpty()}">
+            <thead><tr><th>Train #</th><th>Name</th><th>Route</th><th>Capacity</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+                <tr th:each="t : ${trains}">
+                    <td><code th:text="${t.trainNumber}">NM001</code></td>
+                    <td th:text="${t.name != null ? t.name : '—'}">—</td>
+                    <td th:text="${t.route != null ? t.route.name : 'Unassigned'}">—</td>
+                    <td th:text="${t.capacity}">0</td>
+                    <td>
+                        <span class="badge-s badge-scheduled" th:if="${t.status.name() == 'SCHEDULED'}">Scheduled</span>
+                        <span class="badge-s badge-running" th:if="${t.status.name() == 'RUNNING'}">Running</span>
+                        <span class="badge-s badge-delayed" th:if="${t.status.name() == 'DELAYED'}">Delayed</span>
+                        <span class="badge-s badge-cancelled" th:if="${t.status.name() == 'CANCELLED'}">Cancelled</span>
+                        <span class="badge-s badge-completed" th:if="${t.status.name() == 'COMPLETED'}">Completed</span>
+                        <span class="badge-s badge-maintenance" th:if="${t.status.name() == 'MAINTENANCE'}">Maintenance</span>
+                    </td>
+                    <td><a th:href="@{'/operator/trains/' + ${t.id} + '/status'}" class="btn-status">Update Status</a></td>
+                </tr>
+            </tbody>
+        </table>
+        <div th:if="${trains.isEmpty()}" class="empty">No trains found.</div>
+    </div>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

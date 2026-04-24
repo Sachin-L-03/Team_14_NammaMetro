@@ -1,0 +1,5 @@
+com\nammametro\service\TicketService$1.class
+com\nammametro\pattern\TrainStateContext$1.class
+com\nammametro\pattern\RunningState$1.class
+com\nammametro\pattern\DelayedState$1.class
+com\nammametro\pattern\CancelledState$1.class

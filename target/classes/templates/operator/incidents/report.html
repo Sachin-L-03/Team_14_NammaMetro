@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Incident — Namma Metro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <style>
+        body{background:#0F0F1A;font-family:'Inter',sans-serif;color:#E2E8F0;margin:0}
+        .op-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(26,26,46,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(245,158,11,.2)}
+        .op-bar a{color:#FBBF24;text-decoration:none;font-weight:600;font-size:.9rem}
+        .op-bar .title{font-size:1.1rem;font-weight:700;color:#F8FAFC}
+        .container{max-width:600px;margin:0 auto;padding:2.5rem 2rem}
+        h1{font-size:1.5rem;font-weight:700;color:#F8FAFC;margin-bottom:1.5rem}
+        .form-card{background:#1A1A2E;border:1px solid rgba(239,68,68,.15);border-radius:16px;padding:2rem}
+        .form-group{margin-bottom:1.15rem}
+        .form-label{display:block;font-size:.85rem;font-weight:500;color:#CBD5E1;margin-bottom:.4rem}
+        .form-input,.form-select,.form-textarea{width:100%;padding:.7rem 1rem;background:rgba(15,15,26,.6);border:1px solid rgba(239,68,68,.2);border-radius:10px;color:#E2E8F0;font-size:.9rem;font-family:'Inter',sans-serif;outline:none;transition:border .3s}
+        .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:#EF4444;box-shadow:0 0 10px rgba(239,68,68,.15)}
+        .form-select option{background:#1A1A2E;color:#E2E8F0}
+        .form-textarea{min-height:100px;resize:vertical}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+        .severity-selector{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-top:.4rem}
+        .sev-option input[type=radio]{position:absolute;opacity:0;width:0;height:0}
+        .sev-option{position:relative}
+        .sev-label{display:flex;align-items:center;justify-content:center;padding:.6rem;border:2px solid rgba(124,58,237,.15);border-radius:10px;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .3s}
+        .sev-option input:checked+.sev-low{border-color:#3B82F6;background:rgba(59,130,246,.1);color:#60A5FA}
+        .sev-option input:checked+.sev-medium{border-color:#F59E0B;background:rgba(245,158,11,.1);color:#FBBF24}
+        .sev-option input:checked+.sev-high{border-color:#EF4444;background:rgba(239,68,68,.1);color:#F87171}
+        .btn-submit{width:100%;padding:.8rem;margin-top:.75rem;background:linear-gradient(135deg,#EF4444,#DC2626);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .3s;box-shadow:0 0 18px rgba(239,68,68,.2)}
+        .btn-submit:hover{transform:translateY(-2px);box-shadow:0 0 28px rgba(239,68,68,.35)}
+    </style>
+</head>
+<body>
+    <div class="op-bar">
+        <a th:href="@{/operator/incidents}">← Back to Incidents</a>
+        <span class="title">Report Incident</span>
+        <span></span>
+    </div>
+    <div class="container">
+        <h1>🆘 Report Incident</h1>
+        <div class="form-card">
+            <form th:action="@{/operator/incidents/report}" method="post">
+                <div class="form-group">
+                    <label class="form-label" for="title">Title *</label>
+                    <input type="text" id="title" name="title" class="form-input" required maxlength="150" placeholder="e.g. Signal failure at Majestic">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="type">Incident Type *</label>
+                        <select id="type" name="type" class="form-select" required>
+                            <option value="">Select Type</option>
+                            <option value="SIGNAL_FAILURE">Signal Failure</option>
+                            <option value="MECHANICAL">Mechanical Issue</option>
+                            <option value="POWER_OUTAGE">Power Outage</option>
+                            <option value="TRACK_ISSUE">Track Issue</option>
+                            <option value="PASSENGER_EMERGENCY">Passenger Emergency</option>
+                            <option value="SECURITY">Security Incident</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="trainId">Affected Train</label>
+                        <select id="trainId" name="trainId" class="form-select">
+                            <option value="">None / General</option>
+                            <option th:each="t : ${trains}" th:value="${t.id}"
+                                    th:text="${t.trainNumber + (t.name != null ? ' — ' + t.name : '')}">Train</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Severity *</label>
+                    <div class="severity-selector">
+                        <div class="sev-option">
+                            <input type="radio" id="sev-low" name="severity" value="LOW" checked>
+                            <label for="sev-low" class="sev-label sev-low">🟢 LOW</label>
+                        </div>
+                        <div class="sev-option">
+                            <input type="radio" id="sev-medium" name="severity" value="MEDIUM">
+                            <label for="sev-medium" class="sev-label sev-medium">🟡 MEDIUM</label>
+                        </div>
+                        <div class="sev-option">
+                            <input type="radio" id="sev-high" name="severity" value="HIGH">
+                            <label for="sev-high" class="sev-label sev-high">🔴 HIGH</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="description">Description</label>
+                    <textarea id="description" name="description" class="form-textarea" placeholder="Describe the incident in detail..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">🆘 Submit Incident Report</button>
+            </form>
+        </div>
+    </div>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

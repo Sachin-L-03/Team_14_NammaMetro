@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Routes — Namma Metro Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <style>
+        body{background:#0F0F1A;font-family:'Inter',sans-serif;color:#E2E8F0;margin:0}
+        .admin-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(26,26,46,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(239,68,68,.2)}
+        .admin-bar a{color:#F87171;text-decoration:none;font-weight:600;font-size:.9rem}
+        .admin-bar .title{font-size:1.1rem;font-weight:700;color:#F8FAFC}
+        .container{max-width:1100px;margin:0 auto;padding:2.5rem 2rem}
+        .top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+        .top-row h1{font-size:1.5rem;font-weight:700;color:#F8FAFC}
+        .btn-add{padding:.6rem 1.4rem;background:linear-gradient(135deg,#10B981,#059669);color:#fff;border:none;border-radius:10px;font-weight:600;font-size:.875rem;text-decoration:none;transition:all .3s}
+        .btn-add:hover{transform:translateY(-2px);box-shadow:0 0 20px rgba(16,185,129,.3);color:#fff}
+        .alert{padding:.75rem 1rem;border-radius:10px;margin-bottom:1.25rem;font-size:.875rem;font-weight:500}
+        .alert-error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#FCA5A5}
+        .alert-success{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#6EE7B7}
+        table{width:100%;border-collapse:collapse;background:#1A1A2E;border-radius:12px;overflow:hidden}
+        thead{background:rgba(124,58,237,.1)}
+        th{padding:.85rem 1rem;text-align:left;font-size:.8rem;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.05em}
+        td{padding:.85rem 1rem;font-size:.9rem;border-top:1px solid rgba(124,58,237,.1)}
+        tr:hover td{background:rgba(124,58,237,.04)}
+        .route-arrow{color:#7C3AED;font-weight:600}
+        .intermediate-list{font-size:.8rem;color:#94A3B8}
+        .actions a{margin-right:.75rem;font-size:.85rem;font-weight:500}
+        .actions .edit{color:#60A5FA}
+        .actions .delete{color:#F87171}
+        .empty{text-align:center;padding:3rem;color:#64748B;font-size:1rem}
+    </style>
+</head>
+<body>
+    <div class="admin-bar">
+        <a th:href="@{/admin/dashboard}">← Back to Dashboard</a>
+        <span class="title">Manage Routes</span>
+        <a th:href="@{/auth/logout}">Logout</a>
+    </div>
+    <div class="container">
+        <div class="top-row">
+            <h1>🗺️ Routes</h1>
+            <a th:href="@{/admin/routes/new}" class="btn-add">+ Add Route</a>
+        </div>
+
+        <div th:if="${error}" class="alert alert-error" th:text="${error}">Error</div>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}">Success</div>
+
+        <table th:if="${!routes.isEmpty()}">
+            <thead>
+                <tr>
+                    <th>ID</th><th>Name</th><th>Source → Destination</th><th>Intermediate Stops</th><th>Distance</th><th>Duration</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="r : ${routes}">
+                    <td th:text="${r.id}">1</td>
+                    <td th:text="${r.name}">Route</td>
+                    <td>
+                        <span th:text="${r.startStation?.name}">Source</span>
+                        <span class="route-arrow"> → </span>
+                        <span th:text="${r.endStation?.name}">Dest</span>
+                    </td>
+                    <td class="intermediate-list">
+                        <span th:if="${r.intermediateStations != null && !r.intermediateStations.isEmpty()}">
+                            <span th:each="s, iter : ${r.intermediateStations}">
+                                <span th:text="${s.name}">Stop</span><span th:unless="${iter.last}">, </span>
+                            </span>
+                        </span>
+                        <span th:if="${r.intermediateStations == null || r.intermediateStations.isEmpty()}" style="color:#475569">None</span>
+                    </td>
+                    <td><span th:text="${r.distanceKm != null ? r.distanceKm + ' km' : '—'}">—</span></td>
+                    <td><span th:text="${r.durationMin != null ? r.durationMin + ' min' : '—'}">—</span></td>
+                    <td class="actions">
+                        <a th:href="@{'/admin/routes/' + ${r.id} + '/edit'}" class="edit">Edit</a>
+                        <a th:href="@{'/admin/routes/' + ${r.id} + '/delete'}" class="delete"
+                           onclick="return confirm('Delete this route?')">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div th:if="${routes.isEmpty()}" class="empty">No routes found. Add your first route!</div>
+    </div>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

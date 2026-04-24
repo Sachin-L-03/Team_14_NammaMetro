@@ -1,0 +1,174 @@
+/* ============================================================
+   Namma Metro — Dark/Light Theme Toggle
+   Uses CSS custom properties and data-theme attribute.
+   Preference saved to localStorage.
+   ============================================================ */
+
+/* ---- Light Theme Override ---- */
+[data-theme="light"] {
+    --color-primary:        #6D28D9;
+    --color-primary-light:  #8B5CF6;
+    --color-primary-dark:   #4C1D95;
+    --color-secondary:      #059669;
+    --color-secondary-light:#34D399;
+
+    --color-bg:             #F8FAFC;
+    --color-surface:        #FFFFFF;
+    --color-surface-hover:  #F1F5F9;
+    --color-surface-glass:  rgba(255, 255, 255, 0.85);
+
+    --color-text:           #1E293B;
+    --color-text-muted:     #64748B;
+    --color-text-heading:   #0F172A;
+
+    --color-accent:         #D97706;
+    --color-danger:         #DC2626;
+    --color-info:           #2563EB;
+
+    --border-color:         rgba(109, 40, 217, 0.15);
+    --shadow-sm:            0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md:            0 4px 14px rgba(0,0,0,0.1);
+    --shadow-lg:            0 10px 30px rgba(0,0,0,0.12);
+    --shadow-glow:          0 0 20px rgba(109, 40, 217, 0.1);
+}
+
+/* ---- Theme Toggle Button ---- */
+.theme-toggle {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    z-index: 9999;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-glow);
+    border-color: var(--color-primary);
+}
+
+/* Theme-specific content adjustments for light mode */
+[data-theme="light"] body {
+    background: var(--color-bg) !important;
+    color: var(--color-text) !important;
+}
+
+[data-theme="light"] .dash-header,
+[data-theme="light"] .pax-bar,
+[data-theme="light"] .bar {
+    background: rgba(255,255,255,.92) !important;
+    border-bottom-color: rgba(109,40,217,.12) !important;
+}
+
+[data-theme="light"] .dash-brand-text {
+    background: linear-gradient(135deg,#059669,#047857) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+[data-theme="light"] .search-card,
+[data-theme="light"] .panel,
+[data-theme="light"] .notif-card,
+[data-theme="light"] .chart-card,
+[data-theme="light"] .chart-container,
+[data-theme="light"] .filter-card,
+[data-theme="light"] .route-card,
+[data-theme="light"] .ticket-card,
+[data-theme="light"] .q-card,
+[data-theme="light"] .stat-card {
+    background: #FFFFFF !important;
+    border-color: rgba(109,40,217,.1) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+
+[data-theme="light"] table {
+    background: #FFFFFF !important;
+}
+
+[data-theme="light"] thead {
+    background: rgba(109,40,217,.04) !important;
+}
+
+[data-theme="light"] th {
+    color: #64748B !important;
+}
+
+[data-theme="light"] td {
+    border-color: rgba(0,0,0,.06) !important;
+    color: #334155 !important;
+}
+
+[data-theme="light"] .form-select,
+[data-theme="light"] .form-input {
+    background: #F8FAFC !important;
+    border-color: rgba(109,40,217,.15) !important;
+    color: #1E293B !important;
+}
+
+[data-theme="light"] .form-select option {
+    background: #FFFFFF !important;
+    color: #1E293B !important;
+}
+
+[data-theme="light"] .dash-welcome h1,
+[data-theme="light"] h1,
+[data-theme="light"] .panel-title,
+[data-theme="light"] .chart-title,
+[data-theme="light"] .section-title,
+[data-theme="light"] .route-name,
+[data-theme="light"] .notif-title,
+[data-theme="light"] .station-name,
+[data-theme="light"] .ticket-header h1 {
+    color: #0F172A !important;
+}
+
+[data-theme="light"] .dash-welcome p,
+[data-theme="light"] .notif-msg,
+[data-theme="light"] .details-cell,
+[data-theme="light"] .empty,
+[data-theme="light"] .empty-msg,
+[data-theme="light"] .summary,
+[data-theme="light"] .journey-summary {
+    color: #64748B !important;
+}
+
+[data-theme="light"] .dash-user-name {
+    color: #1E293B !important;
+}
+
+[data-theme="light"] .detail-item {
+    background: #F8FAFC !important;
+    border-color: rgba(109,40,217,.08) !important;
+}
+
+[data-theme="light"] .fare-highlight {
+    background: rgba(5,150,105,.06) !important;
+    border-color: rgba(5,150,105,.12) !important;
+}
+
+[data-theme="light"] .fare-breakdown {
+    background: rgba(5,150,105,.03) !important;
+    border-color: rgba(5,150,105,.1) !important;
+}
+
+[data-theme="light"] .page-btn {
+    background: #FFFFFF !important;
+    border-color: rgba(109,40,217,.12) !important;
+    color: #334155 !important;
+}
+
+[data-theme="light"] .dash-page {
+    background: #F1F5F9 !important;
+}

@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${isEdit ? 'Edit Station' : 'Add Station'} + ' — Namma Metro Admin'">Station Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <style>
+        body{background:#0F0F1A;font-family:'Inter',sans-serif;color:#E2E8F0;margin:0}
+        .admin-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(26,26,46,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(239,68,68,.2)}
+        .admin-bar a{color:#F87171;text-decoration:none;font-weight:600;font-size:.9rem}
+        .admin-bar .title{font-size:1.1rem;font-weight:700;color:#F8FAFC}
+        .container{max-width:600px;margin:0 auto;padding:2.5rem 2rem}
+        h1{font-size:1.5rem;font-weight:700;color:#F8FAFC;margin-bottom:1.5rem}
+        .alert{padding:.75rem 1rem;border-radius:10px;margin-bottom:1.25rem;font-size:.875rem;font-weight:500}
+        .alert-error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#FCA5A5}
+        .form-card{background:#1A1A2E;border:1px solid rgba(124,58,237,.15);border-radius:16px;padding:2rem}
+        .form-group{margin-bottom:1.15rem}
+        .form-label{display:block;font-size:.85rem;font-weight:500;color:#CBD5E1;margin-bottom:.4rem}
+        .form-input,.form-select{width:100%;padding:.7rem 1rem;background:rgba(15,15,26,.6);border:1px solid rgba(124,58,237,.2);border-radius:10px;color:#E2E8F0;font-size:.9rem;font-family:'Inter',sans-serif;outline:none;transition:border .3s}
+        .form-input:focus,.form-select:focus{border-color:#7C3AED;box-shadow:0 0 10px rgba(124,58,237,.2)}
+        .form-select option{background:#1A1A2E;color:#E2E8F0}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+        .form-check{display:flex;align-items:center;gap:.5rem;margin-top:.25rem}
+        .form-check input[type=checkbox]{width:18px;height:18px;accent-color:#7C3AED}
+        .btn-submit{width:100%;padding:.8rem;margin-top:.75rem;background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .3s;box-shadow:0 0 18px rgba(124,58,237,.2)}
+        .btn-submit:hover{transform:translateY(-2px);box-shadow:0 0 28px rgba(124,58,237,.35)}
+    </style>
+</head>
+<body>
+    <div class="admin-bar">
+        <a th:href="@{/admin/stations}">← Back to Stations</a>
+        <span class="title" th:text="${isEdit ? 'Edit Station' : 'Add New Station'}">Station Form</span>
+        <span></span>
+    </div>
+    <div class="container">
+        <h1 th:text="${isEdit ? '✏️ Edit Station' : '➕ Add New Station'}">Station Form</h1>
+
+        <div th:if="${error}" class="alert alert-error" th:text="${error}">Error</div>
+
+        <div class="form-card">
+            <form th:action="@{/admin/stations}" method="post">
+                <!-- Hidden fields for edit mode -->
+                <input type="hidden" name="isEdit" th:value="${isEdit}">
+                <input type="hidden" name="id" th:value="${station.id}" th:if="${isEdit}">
+
+                <div class="form-group">
+                    <label class="form-label" for="name">Station Name *</label>
+                    <input type="text" id="name" name="name" class="form-input"
+                           th:value="${station.name}" required maxlength="100" placeholder="e.g. Majestic">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="code">Station Code *</label>
+                        <input type="text" id="code" name="code" class="form-input"
+                               th:value="${station.code}" required maxlength="10" placeholder="e.g. MJC">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="line">Line *</label>
+                        <select id="line" name="line" class="form-select" required>
+                            <option value="">Select Line</option>
+                            <option value="Purple Line" th:selected="${station.line == 'Purple Line'}">Purple Line</option>
+                            <option value="Green Line" th:selected="${station.line == 'Green Line'}">Green Line</option>
+                            <option value="Yellow Line" th:selected="${station.line == 'Yellow Line'}">Yellow Line</option>
+                            <option value="Pink Line" th:selected="${station.line == 'Pink Line'}">Pink Line</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="location">Location</label>
+                    <input type="text" id="location" name="location" class="form-input"
+                           th:value="${station.location}" maxlength="255" placeholder="e.g. Bengaluru Central">
+                </div>
+
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="isActive" name="isActive" value="true"
+                               th:checked="${station.isActive != null ? station.isActive : true}">
+                        <label class="form-label" for="isActive" style="margin:0">Active</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit"
+                        th:text="${isEdit ? 'Update Station' : 'Create Station'}">Save</button>
+            </form>
+        </div>
+    </div>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

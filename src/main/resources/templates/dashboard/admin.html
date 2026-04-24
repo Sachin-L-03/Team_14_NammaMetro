@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Namma Metro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <style>
+        .dash-page { min-height:100vh; background:#0F0F1A; }
+        .dash-header { display:flex; align-items:center; justify-content:space-between; padding:1.25rem 2.5rem; background:rgba(26,26,46,.8); backdrop-filter:blur(16px); border-bottom:1px solid rgba(239,68,68,.2); }
+        .dash-brand { display:flex; align-items:center; gap:.6rem; }
+        .dash-brand-icon { font-size:1.5rem; }
+        .dash-brand-text { font-size:1.15rem; font-weight:700; background:linear-gradient(135deg,#F87171,#EF4444); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .dash-user { display:flex; align-items:center; gap:1rem; color:#CBD5E1; font-size:.9rem; }
+        .dash-user-name { font-weight:600; color:#E2E8F0; }
+        .badge { padding:.25rem .65rem; border-radius:20px; font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+        .badge-admin { background:rgba(239,68,68,.15); color:#F87171; border:1px solid rgba(239,68,68,.3); }
+        .btn-logout { padding:.45rem 1.1rem; background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.3); color:#FCA5A5; border-radius:8px; font-size:.8rem; font-weight:600; text-decoration:none; transition:all .3s ease; }
+        .btn-logout:hover { background:rgba(239,68,68,.25); color:#FCA5A5; }
+        .dash-content { max-width:1100px; margin:0 auto; padding:3rem 2rem; }
+        .dash-welcome h1 { font-size:2rem; font-weight:700; color:#F8FAFC; margin-bottom:.5rem; }
+        .dash-welcome p { color:#94A3B8; font-size:1rem; margin-bottom:2rem; }
+        .stats-row { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1.25rem; margin-bottom:2.5rem; }
+        .stat-card { padding:1.5rem; background:#1A1A2E; border:1px solid rgba(239,68,68,.12); border-radius:16px; text-align:center; }
+        .stat-value { font-size:2.5rem; font-weight:800; background:linear-gradient(135deg,#F87171,#FBBF24); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .stat-label { font-size:.85rem; color:#94A3B8; margin-top:.25rem; }
+        .section-label { font-size:1.25rem; font-weight:600; color:#F8FAFC; margin-bottom:1.25rem; }
+        .dash-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1.5rem; }
+        .dash-card { display:flex; flex-direction:column; padding:1.5rem; background:#1A1A2E; border:1px solid rgba(239,68,68,.15); border-radius:16px; transition:all .3s ease; text-decoration:none; color:#E2E8F0; }
+        .dash-card:hover { transform:translateY(-3px); box-shadow:0 8px 25px rgba(0,0,0,.4),0 0 20px rgba(239,68,68,.15); border-color:#EF4444; color:#E2E8F0; }
+        .dash-card-icon { font-size:2rem; margin-bottom:.75rem; }
+        .dash-card h3 { font-size:1.05rem; font-weight:600; color:#F8FAFC; margin-bottom:.3rem; }
+        .dash-card p { font-size:.825rem; color:#94A3B8; }
+    </style>
+</head>
+<body>
+<div class="dash-page">
+    <header class="dash-header">
+        <div class="dash-brand">
+            <span class="dash-brand-icon">🚇</span>
+            <span class="dash-brand-text">Namma Metro — Admin</span>
+        </div>
+        <div class="dash-user">
+            <span class="dash-user-name" th:text="${user != null ? user.name : 'Admin'}">Admin</span>
+            <span class="badge badge-admin">Admin</span>
+            <a th:href="@{/auth/logout}" class="btn-logout">Logout</a>
+        </div>
+    </header>
+
+    <main class="dash-content">
+        <div class="dash-welcome">
+            <h1>Admin Control Panel 🛡️</h1>
+            <p>Full system access — manage the metro network, users, and monitor operations.</p>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${stationCount != null ? stationCount : 0}">0</div>
+                <div class="stat-label">Stations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${routeCount != null ? routeCount : 0}">0</div>
+                <div class="stat-label">Routes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${trainCount != null ? trainCount : 0}">0</div>
+                <div class="stat-label">Trains</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${passengerCount != null ? passengerCount : 0}">0</div>
+                <div class="stat-label">Passengers</div>
+            </div>
+        </div>
+
+        <!-- Manage Metro Network -->
+        <h2 class="section-label">Manage Metro Network</h2>
+        <div class="dash-grid" style="margin-bottom:2.5rem;">
+            <a href="/admin/stations" class="dash-card" id="manage-stations">
+                <span class="dash-card-icon">🏛️</span>
+                <h3>Manage Stations</h3>
+                <p>Add, edit, and delete metro stations.</p>
+            </a>
+            <a href="/admin/routes" class="dash-card" id="manage-routes">
+                <span class="dash-card-icon">🗺️</span>
+                <h3>Manage Routes</h3>
+                <p>Configure routes with intermediate stops.</p>
+            </a>
+            <a href="/admin/trains" class="dash-card" id="manage-trains">
+                <span class="dash-card-icon">🚆</span>
+                <h3>Manage Trains</h3>
+                <p>Manage fleet, assignments, and statuses.</p>
+            </a>
+        </div>
+
+        <!-- Reports & Analytics -->
+        <h2 class="section-label">Reports & Analytics</h2>
+        <div class="dash-grid" style="margin-bottom:2.5rem;">
+            <a href="/admin/reports/revenue" class="dash-card" id="dash-revenue-report">
+                <span class="dash-card-icon">💰</span>
+                <h3>Revenue Report</h3>
+                <p>Total fare collected by day/route with charts.</p>
+            </a>
+            <a href="/admin/reports/usage" class="dash-card" id="dash-usage-report">
+                <span class="dash-card-icon">📈</span>
+                <h3>Usage Report</h3>
+                <p>Tickets per route, busiest stations, peak hours.</p>
+            </a>
+            <a href="/admin/logs" class="dash-card" id="dash-system-logs">
+                <span class="dash-card-icon">📋</span>
+                <h3>System Logs</h3>
+                <p>Paginated audit trail — filterable by action.</p>
+            </a>
+        </div>
+
+        <!-- System Management -->
+        <h2 class="section-label">System Management</h2>
+        <div class="dash-grid">
+            <a href="/users" class="dash-card" id="dash-users">
+                <span class="dash-card-icon">👥</span> <h3>Users</h3> <p>Manage all user accounts.</p>
+            </a>
+            <a href="/schedules" class="dash-card" id="dash-schedules">
+                <span class="dash-card-icon">🕐</span> <h3>Schedules</h3> <p>Manage timetables.</p>
+            </a>
+            <a href="/tickets" class="dash-card" id="dash-tickets">
+                <span class="dash-card-icon">🎫</span> <h3>Tickets</h3> <p>Monitor ticketing activity.</p>
+            </a>
+            <a href="/incidents" class="dash-card" id="dash-incidents">
+                <span class="dash-card-icon">⚠️</span> <h3>Incidents</h3> <p>Review incident reports.</p>
+            </a>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

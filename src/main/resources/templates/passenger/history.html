@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking History — Namma Metro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <style>
+        body{background:#0F0F1A;font-family:'Inter',sans-serif;color:#E2E8F0;margin:0}
+        .pax-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(26,26,46,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(16,185,129,.2)}
+        .pax-bar a{color:#6EE7B7;text-decoration:none;font-weight:600;font-size:.9rem}
+        .pax-bar .title{font-size:1.1rem;font-weight:700;color:#F8FAFC}
+        .container{max-width:1000px;margin:0 auto;padding:2.5rem 2rem}
+        h1{font-size:1.5rem;font-weight:700;color:#F8FAFC;margin-bottom:1.5rem}
+        .summary{color:#94A3B8;font-size:.9rem;margin-bottom:1.5rem}
+        table{width:100%;border-collapse:collapse;background:#1A1A2E;border-radius:12px;overflow:hidden}
+        thead{background:rgba(16,185,129,.08)}
+        th{padding:.85rem 1rem;text-align:left;font-size:.8rem;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.05em}
+        td{padding:.85rem 1rem;font-size:.9rem;border-top:1px solid rgba(16,185,129,.06)}
+        tr:hover td{background:rgba(16,185,129,.03)}
+        .badge-s{padding:.2rem .6rem;border-radius:6px;font-size:.75rem;font-weight:600}
+        .badge-booked{background:rgba(59,130,246,.15);color:#60A5FA}
+        .badge-confirmed{background:rgba(16,185,129,.15);color:#6EE7B7}
+        .badge-used{background:rgba(124,58,237,.15);color:#A78BFA}
+        .badge-cancelled{background:rgba(239,68,68,.15);color:#FCA5A5}
+        .badge-expired{background:rgba(100,116,139,.2);color:#94A3B8}
+        .btn-view{padding:.3rem .8rem;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:#6EE7B7;border-radius:6px;font-size:.8rem;font-weight:500;text-decoration:none;transition:all .3s}
+        .btn-view:hover{background:rgba(16,185,129,.2);color:#6EE7B7}
+        .empty-msg{text-align:center;padding:3rem;color:#64748B}
+        .pagination{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:1.5rem}
+        .page-btn{padding:.5rem 1rem;background:#1A1A2E;border:1px solid rgba(16,185,129,.15);color:#CBD5E1;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:500;transition:all .3s}
+        .page-btn:hover{border-color:#10B981;color:#6EE7B7}
+        .page-btn.active{background:rgba(16,185,129,.15);border-color:#10B981;color:#6EE7B7}
+        .page-btn.disabled{opacity:.4;pointer-events:none}
+        .page-info{font-size:.85rem;color:#94A3B8}
+    </style>
+</head>
+<body>
+    <div class="pax-bar">
+        <a th:href="@{/passenger/dashboard}">← Dashboard</a>
+        <span class="title">Booking History</span>
+        <a th:href="@{/auth/logout}">Logout</a>
+    </div>
+    <div class="container">
+        <h1>📋 Booking History</h1>
+        <p class="summary" th:if="${totalItems != null}">Showing page <span th:text="${currentPage + 1}">1</span> of <span th:text="${totalPages}">1</span> (<span th:text="${totalItems}">0</span> total tickets)</p>
+
+        <table th:if="${tickets != null && !tickets.isEmpty()}">
+            <thead><tr><th>#</th><th>Route</th><th>Train</th><th>Fare</th><th>Status</th><th>Booked</th><th></th></tr></thead>
+            <tbody>
+                <tr th:each="t : ${tickets}">
+                    <td th:text="${t.id}">1</td>
+                    <td>
+                        <span th:text="${t.sourceStation.name}">Src</span>
+                        <span style="color:#10B981"> → </span>
+                        <span th:text="${t.destStation.name}">Dest</span>
+                    </td>
+                    <td th:text="${t.schedule != null && t.schedule.train != null ? t.schedule.train.trainNumber : '—'}">—</td>
+                    <td>₹<span th:text="${t.fare}">25</span></td>
+                    <td>
+                        <span class="badge-s badge-booked" th:if="${t.status.name() == 'BOOKED'}">Booked</span>
+                        <span class="badge-s badge-confirmed" th:if="${t.status.name() == 'CONFIRMED'}">Confirmed</span>
+                        <span class="badge-s badge-used" th:if="${t.status.name() == 'USED'}">Used</span>
+                        <span class="badge-s badge-cancelled" th:if="${t.status.name() == 'CANCELLED'}">Cancelled</span>
+                        <span class="badge-s badge-expired" th:if="${t.status.name() == 'EXPIRED'}">Expired</span>
+                    </td>
+                    <td th:text="${t.bookingTime != null ? #temporals.format(t.bookingTime, 'dd MMM HH:mm') : '—'}">—</td>
+                    <td><a th:href="@{'/passenger/tickets/' + ${t.id}}" class="btn-view">View</a></td>
+                </tr>
+            </tbody>
+        </table>
+        <div th:if="${tickets == null || tickets.isEmpty()}" class="empty-msg">No bookings found.</div>
+
+        <!-- Pagination -->
+        <div class="pagination" th:if="${totalPages != null && totalPages > 1}">
+            <a th:href="@{'/passenger/tickets/history?page=' + ${currentPage - 1}}"
+               th:classappend="${currentPage == 0 ? 'disabled' : ''}" class="page-btn">← Prev</a>
+            <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                <a th:href="@{'/passenger/tickets/history?page=' + ${i}}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == currentPage ? 'active' : ''}" class="page-btn">1</a>
+            </span>
+            <a th:href="@{'/passenger/tickets/history?page=' + ${currentPage + 1}}"
+               th:classappend="${currentPage + 1 >= totalPages ? 'disabled' : ''}" class="page-btn">Next →</a>
+        </div>
+    </div>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

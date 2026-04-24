@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Routes — Namma Metro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <style>
+        body{background:#0F0F1A;font-family:'Inter',sans-serif;color:#E2E8F0;margin:0}
+        .pax-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(26,26,46,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(16,185,129,.2)}
+        .pax-bar a{color:#6EE7B7;text-decoration:none;font-weight:600;font-size:.9rem}
+        .pax-bar .title{font-size:1.1rem;font-weight:700;color:#F8FAFC}
+        .container{max-width:650px;margin:0 auto;padding:2.5rem 2rem}
+        h1{font-size:1.5rem;font-weight:700;color:#F8FAFC;margin-bottom:1.5rem}
+        .alert-error{padding:.75rem 1rem;border-radius:10px;margin-bottom:1.25rem;font-size:.875rem;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#FCA5A5}
+        .search-card{background:#1A1A2E;border:1px solid rgba(16,185,129,.15);border-radius:16px;padding:2rem}
+        .form-group{margin-bottom:1.15rem}
+        .form-label{display:block;font-size:.85rem;font-weight:500;color:#CBD5E1;margin-bottom:.4rem}
+        .form-select{width:100%;padding:.7rem 1rem;background:rgba(15,15,26,.6);border:1px solid rgba(16,185,129,.2);border-radius:10px;color:#E2E8F0;font-size:.9rem;font-family:'Inter',sans-serif;outline:none}
+        .form-select:focus{border-color:#10B981;box-shadow:0 0 10px rgba(16,185,129,.2)}
+        .form-select option{background:#1A1A2E;color:#E2E8F0}
+        .btn-submit{width:100%;padding:.8rem;margin-top:.5rem;background:linear-gradient(135deg,#10B981,#059669);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif;box-shadow:0 0 18px rgba(16,185,129,.2)}
+        .btn-submit:hover{transform:translateY(-2px);box-shadow:0 0 28px rgba(16,185,129,.35)}
+    </style>
+</head>
+<body>
+    <div class="pax-bar">
+        <a th:href="@{/passenger/dashboard}">← Dashboard</a>
+        <span class="title">Search Routes</span>
+        <a th:href="@{/auth/logout}">Logout</a>
+    </div>
+    <div class="container">
+        <h1>🔍 Search Routes</h1>
+        <div th:if="${error}" class="alert-error" th:text="${error}"></div>
+        <div class="search-card">
+            <form th:action="@{/passenger/search}" method="post">
+                <div class="form-group">
+                    <label class="form-label" for="sourceStationId">From Station *</label>
+                    <select id="sourceStationId" name="sourceStationId" class="form-select" required>
+                        <option value="">Select Source Station</option>
+                        <option th:each="s : ${stations}" th:value="${s.id}" th:text="${s.name + ' (' + s.code + ' — ' + s.line + ')'}">Station</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="destStationId">To Station *</label>
+                    <select id="destStationId" name="destStationId" class="form-select" required>
+                        <option value="">Select Destination Station</option>
+                        <option th:each="s : ${stations}" th:value="${s.id}" th:text="${s.name + ' (' + s.code + ' — ' + s.line + ')'}">Station</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">🔍 Search Routes &amp; Fares</button>
+            </form>
+        </div>
+    </div>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>

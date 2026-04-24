@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Log in to Namma Metro Operations & Information Management System">
+    <title>Login — Namma Metro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0F0F1A 0%, #1A1A2E 40%, #0F0F1A 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-page::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 70%, rgba(16, 185, 129, 0.06) 0%, transparent 50%);
+            animation: bgShift 15s ease-in-out infinite alternate;
+        }
+        @keyframes bgShift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(3%, 3%); }
+        }
+        .auth-card {
+            position: relative;
+            width: 100%;
+            max-width: 440px;
+            padding: 2.5rem;
+            background: rgba(26, 26, 46, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(124, 58, 237, 0.1);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        .auth-brand {
+            text-align: center;
+            margin-bottom: 1.75rem;
+        }
+        .auth-brand-icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .auth-brand-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #A78BFA, #10B981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .auth-brand-sub {
+            font-size: 0.85rem;
+            color: #94A3B8;
+            margin-top: 0.25rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #CBD5E1;
+            margin-bottom: 0.4rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 15, 26, 0.6);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            border-radius: 10px;
+            color: #E2E8F0;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .form-input:focus {
+            border-color: #7C3AED;
+            box-shadow: 0 0 12px rgba(124, 58, 237, 0.25);
+        }
+        .form-input::placeholder {
+            color: #64748B;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 0.85rem;
+            margin-top: 0.5rem;
+            background: linear-gradient(135deg, #7C3AED, #5B21B6);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.25);
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
+        }
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.875rem;
+            color: #94A3B8;
+        }
+        .auth-footer a {
+            color: #A78BFA;
+            font-weight: 500;
+        }
+        .auth-footer a:hover {
+            color: #C4B5FD;
+        }
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .alert-error {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #FCA5A5;
+        }
+        .alert-success {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6EE7B7;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-card" id="login-card">
+            <!-- Brand -->
+            <div class="auth-brand">
+                <span class="auth-brand-icon">🚇</span>
+                <span class="auth-brand-text">Namma Metro</span>
+                <p class="auth-brand-sub">Sign in to your account</p>
+            </div>
+
+            <!-- Error / Success messages -->
+            <div th:if="${error}" class="alert alert-error" id="login-error">
+                <span th:text="${error}">Error message</span>
+            </div>
+            <div th:if="${success}" class="alert alert-success" id="login-success">
+                <span th:text="${success}">Success message</span>
+            </div>
+
+            <!-- Login Form -->
+            <form th:action="@{/auth/login}" method="post" id="login-form">
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input"
+                           placeholder="you@example.com" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-input"
+                           placeholder="••••••••" required minlength="6">
+                </div>
+
+                <button type="submit" class="btn-submit" id="btn-login">Sign In</button>
+            </form>
+
+            <!-- Footer link to register -->
+            <div class="auth-footer">
+                Don't have an account?
+                <a th:href="@{/auth/register}">Create one</a>
+            </div>
+        </div>
+    </div>
+<script th:src="@{/js/theme.js}"></script>
+</body>
+</html>
